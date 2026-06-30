@@ -1,105 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Secret Result</title>
-
-<link rel="stylesheet" href="style.css">
-
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-<script src="firebase.js"></script>
-</head>
-
-<body>
-
-<div class="wrapper">
-
-  <div class="header">
-    <div class="title">🎁 Secret Revealed</div>
-    <div class="subtitle">Do not share this page</div>
-  </div>
-
-  <div class="section" style="text-align:center;">
-
-    <div id="status" style="color: var(--muted); margin-bottom: 10px;">
-      Loading...
-    </div>
-
-    <div id="result" class="result-title"></div>
-
-  </div>
-
-</div>
-
 <script>
-
-// ===============================
-// GET URL PARAMETERS
-// ===============================
 const params = new URLSearchParams(window.location.search);
 
-const giverName = params.get("name");
+const name = params.get("name");
 const code = params.get("code");
 
-// ===============================
-// VALIDATION
-// ===============================
-if (!giverName || !code) {
-  document.getElementById("status").innerHTML =
-    "Invalid link. No access.";
-  throw new Error("Missing parameters");
+if (!name || !code) {
+  document.body.innerHTML = "Invalid link";
+  throw new Error();
 }
 
-// ===============================
-// DECODE RECEIVER
-// ===============================
-let receiver = "";
+let receiver = atob(code);
 
-try {
-  receiver = atob(code);
-} catch (e) {
-  document.getElementById("status").innerHTML =
-    "Invalid secret code.";
-  throw new Error("Invalid base64");
-}
-
-// ===============================
-// OPTIONAL: VERIFY FROM FIREBASE
-// ===============================
-async function verify() {
-
-  const doc = await db.collection("assignments").doc(giverName).get();
-
-  if (!doc.exists) {
-    document.getElementById("status").innerHTML =
-      "No assignment found.";
-    return;
-  }
-
-  const data = doc.data();
-
-  if (data.receiver !== receiver) {
-    document.getElementById("status").innerHTML =
-      "Link mismatch detected.";
-    return;
-  }
-
-  // ===============================
-  // SHOW RESULT
-  // ===============================
-  document.getElementById("status").innerHTML =
-    "Give your gift to";
-
-  document.getElementById("result").innerHTML =
-    receiver;
-}
-
-verify();
-
+document.body.innerHTML = `
+  <div style="text-align:center;margin-top:50px;font-family:sans-serif;">
+    <h2>Give your gift to</h2>
+    <h1 style="color:#4da3ff;">${receiver}</h1>
+  </div>
+`;
 </script>
-
-</body>
-</html>
