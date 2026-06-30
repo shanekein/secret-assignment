@@ -1,152 +1,388 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Secret Santa</title>
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Secret Assignment System</title>  <style>  
+:root {  
+  --bg1: #0b0f17;  
+  --bg2: #111827;  
+  --glass: rgba(255, 255, 255, 0.06);  
+  --stroke: rgba(255, 255, 255, 0.12);  
+  --text: rgba(255, 255, 255, 0.92);  
+  --muted: rgba(255, 255, 255, 0.65);  
+  --accent: #4da3ff;  
+}  
+  
+body {  
+  margin: 0;  
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",  
+    "Segoe UI", Roboto, Arial, sans-serif;  
+  background:  
+    radial-gradient(1200px 600px at 20% 10%, #1b2a44, transparent),  
+    radial-gradient(900px 500px at 80% 90%, #121b2e, transparent),  
+    linear-gradient(180deg, var(--bg1), var(--bg2));  
+  color: var(--text);  
+}  
+  
+.wrapper {  
+  max-width: 820px;  
+  margin: 40px auto;  
+  padding: 0 16px;  
+}  
+  
+.header {  
+  padding: 18px;  
+  border: 1px solid var(--stroke);  
+  background: var(--glass);  
+  border-radius: 16px;  
+  backdrop-filter: blur(18px);  
+}  
+  
+.title {  
+  font-size: 25px;  
+  font-weight: 10000;  
+}  
+  
+.subtitle {  
+  font-size: 13px;  
+  color: var(--muted);  
+  margin-top: 4px;  
+}  
+  
+.section {  
+  margin-top: 16px;  
+  padding: 16px;  
+  border-radius: 16px;  
+  border: 1px solid var(--stroke);  
+  background: var(--glass);  
+  backdrop-filter: blur(18px);  
+}  
+  
+/* PERSON CARD */  
+.person {  
+  padding: 12px;  
+  border: 1px solid var(--stroke);  
+  border-radius: 14px;  
+  margin-bottom: 12px;  
+  background: rgba(0,0,0,0.15);  
+}  
+  
+/* NAME */  
+.name {  
+  font-size: 15px;  
+  font-weight: 700;  
+  color: var(--accent);  
+  margin-bottom: 10px;  
+  letter-spacing: 0.3px;  
+}  
+  
+/* 🔥 FIXED 2-COLUMN LAYOUT (STABLE FLEX METHOD) */  
+.exclusions {  
+  display: grid;  
+  grid-template-columns: repeat(2, minmax(0, 1fr));  
+  gap: 10px 14px;  
+  
+  width: 100%;  
+  box-sizing: border-box;  
+}  
+  
+label {  
+  display: flex;  
+  align-items: center;  
+  gap: 8px;  
+  
+  font-size: 12px;  
+  color: var(--muted);  
+  
+  min-width: 0;  
+  width: 100%;  
+  
+  padding: 6px 8px;  
+  border-radius: 8px;  
+  
+  background: rgba(255,255,255,0.03);  
+  
+  box-sizing: border-box;  
+}  
+  
+.exclusions > label {  
+  min-width: 0;  
+}  
+  
+  
+  
+input[type="checkbox"] {  
+  accent-color: var(--accent);  
+  transform: scale(1.05);  
+}  
+  
+/* MOBILE = 1 COLUMN */  
+@media (max-width: 600px) {  
+  label {  
+    width: 100%;  
+  }  
+}  
+  
+/* BUTTON */  
+button {  
+  width: 100%;  
+  margin-top: 12px;  
+  padding: 12px;  
+  border-radius: 12px;  
+  border: 1px solid var(--stroke);  
+  background: rgba(77,163,255,0.15);  
+  color: var(--text);  
+  cursor: pointer;  
+  font-weight: 500;  
+}  
+  
+button:hover {  
+  background: rgba(77,163,255,0.25);  
+}  
+  
+/* RESULT CARD */  
+.card {  
+  margin-top: 12px;  
+  padding: 16px;  
+  border-radius: 14px;  
+  border: 1px solid var(--stroke);  
+  background: rgba(0,0,0,0.25);  
+  
+  display: flex;  
+  flex-direction: column;  
+  gap: 10px; /* 🔥 THIS ADDS SPACE */  
+}  
+  
+/* ENCRYPTED LINK */  
+.link {  
+  width: 100%;  
+  box-sizing: border-box;  
+  
+  padding: 12px;  
+  border-radius: 10px;  
+  border: 1px solid rgba(77,163,255,0.35);  
+  background: rgba(0,0,0,0.45);  
+  
+  color: rgba(77,163,255,0.95);  
+  
+  font-family: "Courier New", monospace;  
+  font-size: 12px;  
+  letter-spacing: 1px;  
+  
+  overflow-wrap: anywhere;  
+  word-break: break-all;  
+}  
+  
+/* 🔥 RESULT PAGE UPGRADE */  
+.result-title {  
+  font-size: 34px;  
+  font-weight: 800;  
+  color: var(--accent);  
+  text-shadow: 0 0 18px rgba(77,163,255,0.35);  
+  margin-top: 10px;  
+}  
+  
+.result-sub {  
+  font-size: 13px;  
+  color: var(--muted);  
+  letter-spacing: 2px;  
+  text-transform: uppercase;  
+}  
+</style>  </head>  <body>  <div class="wrapper">    <div class="header">  
+    <div class="title">Mura’g Tala On The Mix</div>  
+    <div class="subtitle">Select the names nga napilian na sa person in the past few years nga exchange gift nato.</div>  
+  </div>    <div class="section">  
+    <div id="inputs"></div>  <button onclick="generate()">Generate Link</button>  
 
-<link rel="stylesheet" href="style.css">
+<div id="output"></div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-<script src="firebase.js"></script>
-</head>
-
-<body>
-
-<div class="wrapper">
-
-<div class="header">
-  <div class="title">Secret Santa Generator</div>
-  <div class="subtitle">Admin panel</div>
-</div>
-
-<div class="section">
-  <div id="inputs"></div>
-  <button onclick="generate()">Generate</button>
-  <div id="output"></div>
-</div>
-
-</div>
-
-<script>
-
-const friends = [
-  "Shane Kein","Kokey","Kia","Ian","Natasha",
-  "Angel","Jea","Franz","Connie Kim","Mary Bless","Mary Jane"
-];
-
-const inputs = document.getElementById("inputs");
-
-friends.forEach(name => {
-  let box = "";
-
-  friends.forEach(other => {
-    if (other !== name) {
-      box += `
-        <label>
-          <input type="checkbox" data-giver="${name}" value="${other}">
-          ${other}
-        </label>
-      `;
-    }
-  });
-
-  inputs.innerHTML += `
-    <div class="person">
-      <div class="name">${name}</div>
-      <div class="exclusions">${box}</div>
-    </div>
-  `;
-});
-
-function buildExclusions() {
-  const ex = {};
-
-  document.querySelectorAll("input[type=checkbox]").forEach(cb => {
-    if (cb.checked) {
-      if (!ex[cb.dataset.giver]) ex[cb.dataset.giver] = [];
-      ex[cb.dataset.giver].push(cb.value);
-    }
-  });
-
-  return ex;
-}
-
-function isValid(g, r, ex) {
-  return g !== r && !(ex[g]?.includes(r));
-}
-
-function solve(givers, receivers, used, result, i, ex) {
-  if (i === givers.length) return true;
-
-  const g = givers[i];
-
-  for (let j = 0; j < receivers.length; j++) {
-    if (used[j]) continue;
-
-    const r = receivers[j];
-
-    if (!isValid(g, r, ex)) continue;
-
-    used[j] = true;
-    result[g] = r;
-
-    if (solve(givers, receivers, used, result, i + 1, ex)) return true;
-
-    used[j] = false;
-  }
-
-  return false;
-}
-
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
-function generate() {
-  const ex = buildExclusions();
-
-  const givers = [...friends];
-  let result = null;
-
-  for (let t = 0; t < 50; t++) {
-    const receivers = shuffle([...friends]);
-    const used = Array(friends.length).fill(false);
-    const temp = {};
-
-    if (solve(givers, receivers, used, temp, 0, ex)) {
-      result = temp;
-      break;
-    }
-  }
-
-  const out = document.getElementById("output");
-  out.innerHTML = "";
-
-  friends.forEach(name => {
-    const pick = result[name];
-    const code = btoa(pick);
-
-    const link =
-      window.location.href.split("?")[0] +
-      "result.html?name=" + name +
-      "&code=" + code;
-
-    out.innerHTML += `
-      <div class="card">
-        <div>${name}</div>
-        <input class="link" value="${link}" readonly>
-      </div>
-    `;
-  });
-}
-
-</script>
-
-</body>
+  </div>  </div>  <script>  
+  
+const friends = [  
+  "Shane Kein",  
+  "Kokey",  
+  "Kia",  
+  "Ian",  
+  "Natasha",  
+  "Angel",  
+  "Jea",  
+  "Franz",  
+  "Connie Kim",  
+  "Mary Bless",  
+  "Mary Jane"  
+];  
+  
+// BUILD UI  
+const inputsDiv = document.getElementById("inputs");  
+  
+friends.forEach(name => {  
+  const row = document.createElement("div");  
+  row.className = "person";  
+  
+  let checkboxes = "";  
+  
+  friends.forEach(other => {  
+    if (other === name) return;  
+  
+    checkboxes += `  
+      <label>  
+        <input type="checkbox" data-giver="${name}" value="${other}">  
+        <span>${other}</span>  
+      </label>  
+    `;  
+  });  
+  
+  row.innerHTML = `  
+    <div class="name">${name}</div>  
+    <div class="exclusions">${checkboxes}</div>  
+  `;  
+  
+  inputsDiv.appendChild(row);  
+});  
+  
+// BUILD EXCLUSIONS  
+function buildExclusions() {  
+  const exclusions = {};  
+  
+  document.querySelectorAll("input[type='checkbox']").forEach(cb => {  
+    if (cb.checked) {  
+      const giver = cb.dataset.giver;  
+      const receiver = cb.value;  
+  
+      if (!exclusions[giver]) exclusions[giver] = [];  
+      exclusions[giver].push(receiver);  
+    }  
+  });  
+  
+  return exclusions;  
+}  
+  
+// VALIDATION  
+function isValid(giver, receiver, exclusions) {  
+  if (giver === receiver) return false;  
+  if (exclusions[giver]?.includes(receiver)) return false;  
+  return true;  
+}  
+  
+// BACKTRACKING  
+function solve(givers, receivers, used, result, index, exclusions) {  
+  if (index === givers.length) return true;  
+  
+  const giver = givers[index];  
+  
+  for (let i = 0; i < receivers.length; i++) {  
+    if (used[i]) continue;  
+  
+    const receiver = receivers[i];  
+  
+    if (!isValid(giver, receiver, exclusions)) continue;  
+  
+    used[i] = true;  
+    result[giver] = receiver;  
+  
+    if (solve(givers, receivers, used, result, index + 1, exclusions)) {  
+      return true;  
+    }  
+  
+    used[i] = false;  
+    delete result[giver];  
+  }  
+  
+  return false;  
+}  
+  
+// SHUFFLE  
+function shuffle(array) {  
+  for (let i = array.length - 1; i > 0; i--) {  
+    const j = Math.floor(Math.random() * (i + 1));  
+    [array[i], array[j]] = [array[j], array[i]];  
+  }  
+  return array;  
+}  
+  
+// GENERATE  
+function generate() {  
+  const exclusions = buildExclusions();  
+  const givers = [...friends];  
+  
+  let result = null;  
+  
+  for (let attempt = 0; attempt < 50; attempt++) {  
+    const receivers = shuffle([...friends]);  
+    const used = new Array(friends.length).fill(false);  
+    const temp = {};  
+  
+    if (solve(givers, receivers, used, temp, 0, exclusions)) {  
+      result = temp;  
+      break;  
+    }  
+  }  
+  
+  const output = document.getElementById("output");  
+  output.innerHTML = "";  
+  
+  if (!result) {  
+    output.innerHTML = `  
+      <div class="card">  
+        Unable to generate a valid assignment. Try changing exclusions.  
+      </div>  
+    `;  
+    return;  
+  }  
+  
+  friends.forEach(name => {  
+    const pick = result[name];  
+    const secret = btoa(pick);  
+  
+    const link =  
+      window.location.href.split("?")[0] +  
+      "?name=" + encodeURIComponent(name) +  
+      "&pick=" + secret;  
+  
+    const card = document.createElement("div");  
+    card.className = "card";  
+  
+    card.innerHTML = `  
+      <div>${name}</div>  
+      <input class="link" value="${link}" readonly>  
+    `;  
+  
+    output.appendChild(card);  
+  });  
+}  
+  
+// REVEAL MODE  
+window.onload = () => {  
+  const params = new URLSearchParams(window.location.search);  
+  
+  if (params.has("name") && params.has("pick")) {  
+    document.body.innerHTML = `  
+      <div class="wrapper">  
+  
+        <div class="header">  
+          <div class="title">Secret Name</div>  
+          <div class="subtitle">Tak-oma na imomg mouth 👄</div>  
+        </div>  
+  
+        <div class="section" style="text-align:center; padding:28px 18px;">  
+  
+          <div class="result-sub">  
+            Give your gift to  
+          </div>  
+  
+          <div class="result-title">  
+            ${atob(params.get("pick"))}  
+          </div>  
+  
+          <div style="margin-top:12px; font-size:12px; color:rgba(255,255,255,0.45);">  
+            Do not share, if imong i-share amazing!  
+          </div>  
+  
+        </div>  
+  
+      </div>  
+    `;  
+  }  
+};  
+  
+</script>  </body>  
 </html>
