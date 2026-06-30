@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Secret Assignment Login</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="firebase.js"></script>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+    <div class="header">
+        <div class="title">🎁 Mura'g Tala On The Mix</div>
+        <div class="subtitle">
+            Secret Gift Exchange
+        </div>
+    </div>
+
+    <div class="section">
+
+        <h2>Participant Login</h2>
+
+        <label>Select your name</label>
+
+        <select id="nameSelect" class="textbox">
+
+            <option value="">-- Select your name --</option>
+
+            <option>Shane Kein</option>
+            <option>Kokey</option>
+            <option>Kia</option>
+            <option>Ian</option>
+            <option>Natasha</option>
+            <option>Angel</option>
+            <option>Jea</option>
+            <option>Franz</option>
+            <option>Connie Kim</option>
+            <option>Mary Bless</option>
+            <option>Mary Jane</option>
+
+        </select>
+
+        <label style="margin-top:20px;">Enter your Secret PIN</label>
+
+        <input
+            type="password"
+            id="pin"
+            class="textbox"
+            placeholder="Enter your PIN">
+
+        <button id="loginBtn">
+            Continue
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+document.getElementById("loginBtn").addEventListener("click", () => {
+
+    alert("Next step: Firebase login validation.");
+
+});
+</script>
+
+</body>
+</html>
