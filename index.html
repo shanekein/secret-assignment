@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Secret Assignment Login</title>
+<title>Secret Santa</title>
 
 <link rel="stylesheet" href="style.css">
 
@@ -17,59 +16,136 @@
 
 <div class="wrapper">
 
-    <div class="header">
-        <div class="title">🎁 Mura'g Tala On The Mix</div>
-        <div class="subtitle">
-            Secret Gift Exchange
-        </div>
-    </div>
+<div class="header">
+  <div class="title">Secret Santa Generator</div>
+  <div class="subtitle">Admin panel</div>
+</div>
 
-    <div class="section">
-
-        <h2>Participant Login</h2>
-
-        <label>Select your name</label>
-
-        <select id="nameSelect" class="textbox">
-
-            <option value="">-- Select your name --</option>
-
-            <option>Shane Kein</option>
-            <option>Kokey</option>
-            <option>Kia</option>
-            <option>Ian</option>
-            <option>Natasha</option>
-            <option>Angel</option>
-            <option>Jea</option>
-            <option>Franz</option>
-            <option>Connie Kim</option>
-            <option>Mary Bless</option>
-            <option>Mary Jane</option>
-
-        </select>
-
-        <label style="margin-top:20px;">Enter your Secret PIN</label>
-
-        <input
-            type="password"
-            id="pin"
-            class="textbox"
-            placeholder="Enter your PIN">
-
-        <button id="loginBtn">
-            Continue
-        </button>
-
-    </div>
+<div class="section">
+  <div id="inputs"></div>
+  <button onclick="generate()">Generate</button>
+  <div id="output"></div>
+</div>
 
 </div>
 
 <script>
-document.getElementById("loginBtn").addEventListener("click", () => {
 
-    alert("Next step: Firebase login validation.");
+const friends = [
+  "Shane Kein","Kokey","Kia","Ian","Natasha",
+  "Angel","Jea","Franz","Connie Kim","Mary Bless","Mary Jane"
+];
 
+const inputs = document.getElementById("inputs");
+
+friends.forEach(name => {
+  let box = "";
+
+  friends.forEach(other => {
+    if (other !== name) {
+      box += `
+        <label>
+          <input type="checkbox" data-giver="${name}" value="${other}">
+          ${other}
+        </label>
+      `;
+    }
+  });
+
+  inputs.innerHTML += `
+    <div class="person">
+      <div class="name">${name}</div>
+      <div class="exclusions">${box}</div>
+    </div>
+  `;
 });
+
+function buildExclusions() {
+  const ex = {};
+
+  document.querySelectorAll("input[type=checkbox]").forEach(cb => {
+    if (cb.checked) {
+      if (!ex[cb.dataset.giver]) ex[cb.dataset.giver] = [];
+      ex[cb.dataset.giver].push(cb.value);
+    }
+  });
+
+  return ex;
+}
+
+function isValid(g, r, ex) {
+  return g !== r && !(ex[g]?.includes(r));
+}
+
+function solve(givers, receivers, used, result, i, ex) {
+  if (i === givers.length) return true;
+
+  const g = givers[i];
+
+  for (let j = 0; j < receivers.length; j++) {
+    if (used[j]) continue;
+
+    const r = receivers[j];
+
+    if (!isValid(g, r, ex)) continue;
+
+    used[j] = true;
+    result[g] = r;
+
+    if (solve(givers, receivers, used, result, i + 1, ex)) return true;
+
+    used[j] = false;
+  }
+
+  return false;
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function generate() {
+  const ex = buildExclusions();
+
+  const givers = [...friends];
+  let result = null;
+
+  for (let t = 0; t < 50; t++) {
+    const receivers = shuffle([...friends]);
+    const used = Array(friends.length).fill(false);
+    const temp = {};
+
+    if (solve(givers, receivers, used, temp, 0, ex)) {
+      result = temp;
+      break;
+    }
+  }
+
+  const out = document.getElementById("output");
+  out.innerHTML = "";
+
+  friends.forEach(name => {
+    const pick = result[name];
+    const code = btoa(pick);
+
+    const link =
+      window.location.href.split("?")[0] +
+      "result.html?name=" + name +
+      "&code=" + code;
+
+    out.innerHTML += `
+      <div class="card">
+        <div>${name}</div>
+        <input class="link" value="${link}" readonly>
+      </div>
+    `;
+  });
+}
+
 </script>
 
 </body>
